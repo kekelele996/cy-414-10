@@ -54,6 +54,32 @@ CREATE TABLE IF NOT EXISTS body_metrics (
   CONSTRAINT fk_body_metrics_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS training_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  booking_id INT NOT NULL UNIQUE,
+  coach_id INT NOT NULL,
+  user_id INT NOT NULL,
+  stage_name VARCHAR(120),
+  overall_note TEXT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_training_plans_booking FOREIGN KEY (booking_id) REFERENCES bookings(id),
+  CONSTRAINT fk_training_plans_coach FOREIGN KEY (coach_id) REFERENCES users(id),
+  CONSTRAINT fk_training_plans_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS training_plan_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  plan_id INT NOT NULL,
+  exercise_name VARCHAR(120) NOT NULL,
+  sets VARCHAR(60),
+  reps VARCHAR(60),
+  note VARCHAR(500),
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_training_plan_items_plan FOREIGN KEY (plan_id) REFERENCES training_plans(id) ON DELETE CASCADE
+);
+
 INSERT INTO users (phone, password_hash, nickname, avatar, role, gender, height, weight)
 VALUES
 ('13800000001', '$2a$10$N3l5nJIBV147BsqidbT7QO3U28t5GK1R932GPvmKTyStLXO/pO4iK', '林佳', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&h=160&fit=crop', 'student', 'female', 168, 58),

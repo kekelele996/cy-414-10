@@ -36,3 +36,33 @@ export interface BookingDto {
   course?: CourseDto
 }
 
+export interface TrainingPlanItemDto {
+  id: number
+  exerciseName: string
+  sets?: string | null
+  reps?: string | null
+  note?: string | null
+  sortOrder: number
+}
+
+export interface TrainingPlanCoachDto {
+  id: number
+  nickname: string
+  avatar?: string | null
+  role: string
+}
+
+export interface TrainingPlanDto {
+  id: number
+  bookingId: number
+  coachId: number
+  userId: number
+  stageName?: string | null
+  overallNote?: string | null
+  createdAt: string
+  updatedAt: string
+  items: TrainingPlanItemDto[]
+  coach?: TrainingPlanCoachDto
+  booking?: BookingDto
+}
+

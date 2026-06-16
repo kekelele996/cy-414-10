@@ -27,19 +27,21 @@ enum CourseStatus {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  phone        String       @unique @db.VarChar(32)
-  passwordHash String       @map("password_hash") @db.VarChar(255)
-  nickname     String       @db.VarChar(80)
-  avatar       String?      @db.VarChar(255)
-  role         UserRole     @default(student)
-  gender       String?      @db.VarChar(20)
-  height       Decimal?     @db.Decimal(5, 2)
-  weight       Decimal?     @db.Decimal(5, 2)
-  createdAt    DateTime     @default(now()) @map("created_at")
-  courses      Course[]     @relation("CoachCourses")
-  bookings     Booking[]
-  bodyMetrics  BodyMetric[]
+  id                 Int              @id @default(autoincrement())
+  phone              String           @unique @db.VarChar(32)
+  passwordHash       String           @map("password_hash") @db.VarChar(255)
+  nickname           String           @db.VarChar(80)
+  avatar             String?          @db.VarChar(255)
+  role               UserRole         @default(student)
+  gender             String?          @db.VarChar(20)
+  height             Decimal?         @db.Decimal(5, 2)
+  weight             Decimal?         @db.Decimal(5, 2)
+  createdAt          DateTime         @default(now()) @map("created_at")
+  courses            Course[]         @relation("CoachCourses")
+  bookings           Booking[]
+  bodyMetrics        BodyMetric[]
+  coachedPlans       TrainingPlan[]   @relation("CoachTrainingPlans")
+  userPlans          TrainingPlan[]   @relation("UserTrainingPlans")
 
   @@map("users")
 }
@@ -72,6 +74,7 @@ model Booking {
   createdAt    DateTime      @default(now()) @map("created_at")
   user         User          @relation(fields: [userId], references: [id])
   course       Course        @relation(fields: [courseId], references: [id])
+  trainingPlan TrainingPlan?
 
   @@index([userId])
   @@index([courseId])
@@ -91,5 +94,39 @@ model BodyMetric {
 
   @@index([userId])
   @@map("body_metrics")
+}
+
+model TrainingPlan {
+  id          Int                 @id @default(autoincrement())
+  bookingId   Int                 @unique @map("booking_id")
+  coachId     Int                 @map("coach_id")
+  userId      Int                 @map("user_id")
+  stageName   String?             @map("stage_name") @db.VarChar(120)
+  overallNote String?             @map("overall_note") @db.Text
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+  booking     Booking             @relation(fields: [bookingId], references: [id])
+  coach       User                @relation("CoachTrainingPlans", fields: [coachId], references: [id])
+  user        User                @relation("UserTrainingPlans", fields: [userId], references: [id])
+  items       TrainingPlanItem[]
+
+  @@index([coachId])
+  @@index([userId])
+  @@map("training_plans")
+}
+
+model TrainingPlanItem {
+  id           Int          @id @default(autoincrement())
+  planId       Int          @map("plan_id")
+  exerciseName String       @map("exercise_name") @db.VarChar(120)
+  sets         String?      @db.VarChar(60)
+  reps         String?      @db.VarChar(60)
+  note         String?      @db.VarChar(500)
+  sortOrder    Int          @default(0) @map("sort_order")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  plan         TrainingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId])
+  @@map("training_plan_items")
 }
 

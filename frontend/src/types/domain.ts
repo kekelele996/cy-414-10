@@ -54,3 +54,34 @@ export interface AuthPayload {
   token: string
 }
 
+export interface TrainingPlanItem {
+  id: number
+  exerciseName: string
+  sets?: string | null
+  reps?: string | null
+  note?: string | null
+  sortOrder: number
+}
+
+export interface TrainingPlanItemInput {
+  exerciseName: string
+  sets?: string
+  reps?: string
+  note?: string
+  sortOrder?: number
+}
+
+export interface TrainingPlan {
+  id: number
+  bookingId: number
+  coachId: number
+  userId: number
+  stageName?: string | null
+  overallNote?: string | null
+  createdAt: string
+  updatedAt: string
+  items: TrainingPlanItem[]
+  coach?: Pick<User, 'id' | 'nickname' | 'avatar' | 'role'>
+  booking?: Booking
+}
+
